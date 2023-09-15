@@ -2,7 +2,7 @@ gpt:
   https:
     host: "api.openai.com"
     path: "/v1/chat/completions"
-    api_key: "![0mrQ51K9/yn/xJ4CpED0mMnKhGN8PR1IOdzLSrJHvrPdzQEVs5ybk0Rnp16jwPsYhK33Hk8yG4I=]"
+    api_key: "![GOOZtkjOx8KI+KzBJyh8OL0LmfIVg91gRLeMv+v9v3C1x4STaOypQ5BsVScbeQSNc+ZzzWgZESc=]"
     
   request:
     model: "gpt-3.5-turbo"
@@ -13,7 +13,7 @@ whatsapp:
   https:
     host: "graph.facebook.com"
     path: "/v17.0/118156384720335/messages"
-    token: "![ZdGxb9p3ULxMUCe3XfQJRPXkLFGVpO3fT1bZLs3J9wMbqHxoUG9gnjVD5dCs9YUlHsNbLVlG2gH76RBstBhXWvNyUz+TRGaf8HWucraq6L7w4E5Md34tYs9X8rfpQ6JHzfMlNrG9+upGeukASR+WxS0eb5SjPr7XC+2QNZmzzC2ioftb/hfieCiZ4Bd//ciAofCfthmx4hck/q+MxBhnNTOW9OYeZpFub7yBP5iblf7zEPHioQ90hISqRkaRSnWBDq/2V+Xe/Wk/+q8JLUD65rD5rkJR1MHbpRN067z91kw=]"
+    token: "![ZdGxb9p3ULz/0Dww1Z5FwZELkZFoPKaFiQ01MkueTJr9yPAZBcvmoCe3+mkyYZ6coIVXe/czXhPw/XtyO1dxTZqI0A1W7oW8TYdQzufCFyYCwDhgPeAAkWn6pZRHws9qTYtnRBq0Oh01c0TJ7NrK5t1mAAKhVbAJ6f9GzaNX+gSkAUJ89TxrJ08UFhj1FTCzZ/EjgI7nIqzXIbQnXW+eTpunRCZzeSiQXDpK102OgCoSuUA81lUizjZtS8r/rNoVfJVbOfIZ1v69bj7pUp4ObqDdVEwRP3cjp/pcOBsE+2M=]"
   
   template:
     initial: "arogya_sarathi"
