@@ -13,7 +13,7 @@ whatsapp:
   https:
     host: "graph.facebook.com"
     path: "/v17.0/118156384720335/messages"
-    token: "![ZdGxb9p3ULzrJuxbbKG0JJ0Hc39SFl4EiD3hWHTuol6JwtlPhaKv6redSkI6kWA00o4W0AC3iBifyhnOwTosNbHIVJk8/YPsYP+hc+MwTkpT6a0ktc+Ygec6QkDfLuWENvYeecfQzAcG+4IzUWYFV985CYcfYPSW53VBndqorIw5iV8KpInB509ndkDc0Coc4FHI9Cj3GH307zRYEx4NnI1EaKhw0MgSGcueavjgXH+VGmLS/Vuoh0pzIujojVHbFS9XkhTykANSrKLkVZzQOQsKYUJKVOgqF77TCFpI8RI=]"
+    token: "![ZdGxb9p3ULxMUCe3XfQJRPXkLFGVpO3fT1bZLs3J9wMbqHxoUG9gnjVD5dCs9YUlHsNbLVlG2gH76RBstBhXWvNyUz+TRGaf8HWucraq6L7w4E5Md34tYs9X8rfpQ6JHzfMlNrG9+upGeukASR+WxS0eb5SjPr7XC+2QNZmzzC2ioftb/hfieCiZ4Bd//ciAofCfthmx4hck/q+MxBhnNTOW9OYeZpFub7yBP5iblf7zEPHioQ90hISqRkaRSnWBDq/2V+Xe/Wk/+q8JLUD65rD5rkJR1MHbpRN067z91kw=]"
   
   template:
     initial: "arogya_sarathi"
