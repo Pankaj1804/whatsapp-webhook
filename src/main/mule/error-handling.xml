@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="global-error-handling" doc:id="b5f64fea-ac6c-411e-8869-3ada89a83d40" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7d259c36-59f4-47ba-aa22-514e9fa9b02f" type="ANY">
+			<choice doc:name="Choice" doc:id="69ebb922-702e-4644-a940-e8cdb69637a2" >
+				<when expression='#[(vars.input_var.mobile_no == null) or (vars.input_var.mobile_no == "+")]'>
+					<logger level="INFO" doc:name="Logger" doc:id="91c74c77-225c-4675-a7d7-a531cf8cb65f" message='#["Receive message in wrong format"]' />
+				</when>
+				<otherwise >
+					<ee:transform doc:name="whatssapp_error_template_payload" doc:id="f43afd2c-4980-406e-8297-f1f7a1cd7f38">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "messaging_product": "whatsapp",
+    "to": vars.input_var.mobile_no,
+    "type": "template",
+    "template": {
+        "name": "${whatsapp.template.error_template}",
+        "language": {
+            "code": "en_US"
+        }
+    }
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+					<flow-ref doc:name="call-whatsapp-api" doc:id="c7291e74-c83a-4d41-862b-e14a0ea931ae" name="call-whatsapp-api" />
+					<logger level="INFO" doc:name="Logger" doc:id="5fe56775-0208-491f-861b-7dc01653e4e4" message='#["Failed with error"]' />
+				</otherwise>
+			</choice>
+			<ee:transform doc:name="error massage" doc:id="875b7ece-c436-4716-a50f-bfc125878c9f">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	errorTimestamp: now(),
+	errorType: error.errorType.asString,
+	errorDescription: error.detailedDescription
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="4f89176a-6349-4d20-9e19-20d99037b4e2" message="#[payload]"/>
+		</on-error-propagate>
+	</error-handler>
+</mule>

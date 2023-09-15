@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+    
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="46130fe4-a4ee-4cef-bff8-d0033759d67c" >
+		<http:listener-connection host="0.0.0.0" port="8081"/>
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="63721028-5017-4988-bb75-79e1e3841183" >
+		<http:request-connection protocol="HTTPS" host="${gpt.https.host}"/>
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_whatsapp" doc:name="HTTP Request configuration" doc:id="9f447266-bab1-46e1-922b-28e1384ead7b" >
+		<http:request-connection protocol="HTTPS" host="${whatsapp.https.host}" />
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="7cadbe5a-d083-4e9e-8c57-8530d9d6bd01" file="properties\dev-properties.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="aed9c427-c040-4cad-b41e-8a8935f4c0f7" file="properties\dev-properties.yaml" key="${encryption.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+		
+
+</mule>

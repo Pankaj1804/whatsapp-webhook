@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="whatsapp-webhook-get-flow" doc:id="acc257ff-d935-418d-bc91-8b4b276ce136" >
+		<http:listener doc:name="Listener" doc:id="050a936b-7eeb-4fdf-9a2d-ca75c8a000d5" config-ref="HTTP_Listener_config" path="/webhook" allowedMethods="GET">
+			<http:error-response >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="verify_token" doc:id="fe1c94e2-b0b2-470a-86b2-cd40e54aa65b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output text/plain
+var mode = attributes.queryParams."hub.mode"
+var token = attributes.queryParams."hub.verify_token"
+var challenge = attributes.queryParams."hub.challenge"
+var verify_token = "helloTest"
+var statuscode=200
+---
+if ((!(mode=='') and !(token=='')) and
+    ((mode == "subscribe") and (token == verify_token)) )
+      challenge as String
+     else 
+      403]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="5bf54774-6e16-4890-8161-18adb794310a" message="#[payload]"/>
+		<error-handler ref="global-error-handling" />
+	</flow>
+	<flow name="whatsapp-webhook-post-flow" doc:id="c7632999-4f01-4a31-b88d-059d2a44a9be" >
+		<http:listener doc:name="Listener" doc:id="03e1c38a-4f6a-4d4b-8604-01a2644ca49a" config-ref="HTTP_Listener_config" allowedMethods="POST" path="/webhook">
+			<http:error-response >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="8afc0184-3ab5-47df-8f5f-0794aa610fe7" message="#[payload]"/>
+		<ee:transform doc:name="input_payload" doc:id="e58e1da6-0f31-44bb-ad7e-c0da3a58c965" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="input_var" doc:id="054f7d7d-ef57-4027-b134-b06a14bdad82" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="input_var" ><![CDATA[%dw 2.0
+output application/java
+var mobile_no = payload.entry[0].changes[0].value.messages[0] default null
+---
+{
+query: payload.entry[0].changes[0].value.messages[0].text.body,
+mobile_no: if ( (mobile_no == null) or (mobile_no == "") ) mobile_no else ( "+" ++ ( payload.entry[0].changes[0].value.messages[0].from as String ) ),
+name: payload.entry[0].changes[0].value.contacts[0].profile.name,
+is_greeting: lower(payload.entry[0].changes[0].value.messages[0].text.body),
+
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="validate_correct_event" doc:id="a61caf62-5ce0-4b8c-b432-27cfe784898f" >
+			<when expression='#[(vars.input_var.query == null) or (vars.input_var.query == "")]'>
+				<logger level="INFO" doc:name="Logger" doc:id="6243c8a5-ed63-4382-931c-b72bc3e10772" message='#["Ignore this message as this is not correct input"]'/>
+			</when>
+			<otherwise >
+				<choice doc:name="check_message_is_greeting" doc:id="c601b02c-2343-4c78-9b2e-368eb764ffe4">
+			<when expression='#[vars.input_var.is_greeting == "hi" or vars.input_var.is_greeting == "hello"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="4de00fc9-f266-49af-bcba-062603ac5069" message='#["This is not the query"]'/>
+						<ee:transform doc:name="initial_template_request" doc:id="f23472e2-c050-43f1-8c19-d741335c14ed">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "messaging_product": "whatsapp",
+    "to": vars.input_var.mobile_no,
+    "type": "template",
+    "template": {
+        "name": "${whatsapp.template.initial}",
+        "language": {
+            "code": "en_US"
+        }
+    }
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<flow-ref doc:name="call-whatsapp-api" doc:id="801d3c12-2f52-4d25-82c4-e815ae4f4736" name="call-whatsapp-api" />
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="e7a2b8ac-64b3-43b7-b8f8-4e232700c6b1" message='#["This is a query"]'/>
+						<flow-ref doc:name="get-gpt-data-subFlow" doc:id="b8fee8aa-2013-4e92-8512-028a001dea66" name="get-gpt-data-subFlow" />
+			</otherwise>
+		</choice>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="c00a2f5c-9881-47ee-833a-f9822979c841" message="#[payload]"/>
+		<error-handler ref="global-error-handling" />
+		</flow>
+</mule>

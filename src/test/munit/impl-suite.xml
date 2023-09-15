@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="impl-suite.xml" />
+	<munit:test name="get-gpt-data-subFlow-test-healthcare-query" doc:id="b309fde3-8d63-4faa-8f3a-39560e6488e6" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock call-whatsapp-api" doc:id="0ef56e82-935d-45e6-a94e-975b19b7fb73" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="519516c9-677b-46e3-b406-7a8a4ba339a7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock chat-gpt-api" doc:id="5a1486e3-1319-42c6-9c80-e8690dcf1813" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b8054aaf-f30e-453a-865f-3d6d9f3143ac" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_payload1.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_attributes1.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock chat-gpt-api" doc:id="cbffc6c2-4244-43ac-b14b-19dbcc726156" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="789d3237-2768-4fc0-a812-d9d0523af7a2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_payload2.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_attributes2.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="16cae873-4e16-49be-a2ad-9b9d69dcb752" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://getgptdatasubFlowtesthealthcarequery\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="input_var" value="#[output application/java --- readUrl('classpath://getgptdatasubFlowtesthealthcarequery\set-event_variable_.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get-gpt-data-subFlow" doc:id="a87316b2-0bb7-4b09-b214-ad20e58cbaf9" name="get-gpt-data-subFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="2f0fb48d-0d22-47c2-afca-11199516bed3" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getgptdatasubFlowtesthealthcarequery::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get-gpt-data-subFlow-test-not-healthcare-query" doc:id="2f275963-d30f-40ed-834f-6c2e0a1ef25d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock call-whatsapp-api" doc:id="52549ff4-a108-4097-9449-8ce4952ebf23" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="519516c9-677b-46e3-b406-7a8a4ba339a7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock chat-gpt-api" doc:id="58effe1c-9c64-47ed-805b-3f9cc392c0a5" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="789d3237-2768-4fc0-a812-d9d0523af7a2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\mock_payload1.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\mock_attributes1.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="4c1185cf-ef18-40f9-9b14-43462733e7d4" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="input_var" value="#[output application/java --- readUrl('classpath://getgptdatasubFlowtestnothealthcarequery\set-event_variable_.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get-gpt-data-subFlow" doc:id="ef4210cb-9133-41a6-8265-52aff8f99571" name="get-gpt-data-subFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="fd3aef0a-23dc-4446-a470-57cd2dd0a9cd" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getgptdatasubFlowtestnothealthcarequery::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="chat-gpt-api-test" doc:id="517a90e1-a6d3-4f89-9bec-bbc21691cae3" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock chat_gpt_api_call" doc:id="bb8bb573-06b7-4a24-bba1-dd52f6dc6eef" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a030a6b1-ec77-4214-974c-9e1d3f636780" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://chatgptapitest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://chatgptapitest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://chatgptapitest\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="4aeeca8b-ad66-4710-8be6-124153ccd3b0" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://chatgptapitest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://chatgptapitest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="input_var" value="#[output application/java --- readUrl('classpath://chatgptapitest\set-event_variable_.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to chat-gpt-api" doc:id="609364d2-6524-4fd9-ade0-0ec038b517a4" name="chat-gpt-api"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="39d5465f-3bac-4a5a-9ac7-ba10898fa041" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import chatgptapitest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="call-whatsapp-api-test" doc:id="127281f5-d3b2-4fc5-b5b1-e9107a492483" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock whatsapp_api_call" doc:id="8fe4c62b-dce5-4060-a2f6-ff0a222a43fa" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e4fd6af0-973f-422e-922d-f9518f52b3b9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://callwhatsappapitest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://callwhatsappapitest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://callwhatsappapitest\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="1bb1138b-26a5-4949-a020-bc50a11b302e" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://callwhatsappapitest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://callwhatsappapitest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="input_var" value="#[output application/java --- readUrl('classpath://callwhatsappapitest\set-event_variable_.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to call-whatsapp-api" doc:id="726da142-4f04-49b0-8acb-30ac45083cc3" name="call-whatsapp-api"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="4e5fad41-a2c5-4781-af2b-3043e5a6cb88" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import callwhatsappapitest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

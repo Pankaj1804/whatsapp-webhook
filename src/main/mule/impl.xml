@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-gpt-data-subFlow" doc:id="f3a563f8-7ee6-47e7-b20d-ddf433057406" >
+	<ee:transform doc:name="chat_gpt_validate_query_payload" doc:id="1a3e853b-c988-4b45-99b7-ede6419285c5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "model": "${gpt.request.model}",
+    "messages": [
+        {
+            "role": "${gpt.request.role}",
+            "content":  "Query mention in bracket is healthcare or wellness related, answer only in YES or NO (" ++ (vars.input_var.query default  "") ++ ")"
+        }
+    ]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="chat-gpt-api" doc:id="789d3237-2768-4fc0-a812-d9d0523af7a2" name="chat-gpt-api" />
+		<choice doc:name="validate_query" doc:id="398b0ff5-872e-4bfb-af3e-b76bc4c77c2f" >
+			<when expression='#[payload.choices[0].message.content == "YES"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="5deacbef-3f3f-4e81-a752-b57084f36028" message='#["This is healthcare query"]'/>
+				<ee:transform doc:name="chat_gpt_health_query_payload" doc:id="01cbff30-0276-43ac-9211-a61053991087">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "model": "${gpt.request.model}",
+    "messages": [
+        {
+            "role": "${gpt.request.role}",
+            "content": "Provide symptoms, potential disease, precaution, " ++ 
+                       "home remedy and generic medicine for the query mention in bracket," ++ 
+                       "mention all this in separate line." ++
+                       "Answer should be short and crisp. (" ++ (vars.input_var.query default "") ++ ")"
+        }
+    ]
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<flow-ref doc:name="chat-gpt-api" doc:id="b8054aaf-f30e-453a-865f-3d6d9f3143ac" name="chat-gpt-api"/>
+				<ee:transform doc:name="whatsapp_messag_payload" doc:id="8f2f119f-f0ea-48fa-ae9d-d4ca3b57e3fa">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "messaging_product": "whatsapp",
+    "to": vars.input_var.mobile_no,
+    "type": "text",
+    "text": {
+        
+        "body": "Arogya Sarathi\n\n" ++ payload.choices[0].message.content ++ 
+                "\n\nIf you want a list of doctors, please specify the specialty, area, and city.\n\n" 
+                ++ "Note: The information provided here is based on the details you provided. Consult a doctor before taking any medication or treatment."
+                
+    }
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			
+</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="31beec0c-e590-4682-87b8-1210736e6b2d" message='#["This is not healthcare query"]'/>
+				<ee:transform doc:name="whatsapp_no_health_template" doc:id="ff554037-da93-466c-8299-18618d7b09ae" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "messaging_product": "whatsapp",
+    "to": vars.input_var.mobile_no,
+    "type": "template",
+    "template": {
+        "name": "${whatsapp.template.no_health}",
+        "language": {
+            "code": "en_US"
+        }
+    }
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			
+</otherwise>
+		</choice>
+		<flow-ref doc:name="call-whatsapp-api" doc:id="519516c9-677b-46e3-b406-7a8a4ba339a7" name="call-whatsapp-api" />
+	
+</sub-flow>
+	<sub-flow name="chat-gpt-api" doc:id="f2dd6b0b-b92f-4499-a69c-179b05cf47d7" >
+		<logger level="INFO" doc:name="Logger" doc:id="d027d0f6-ab3f-4783-ab09-42ebbfb84fcb" message='#["Calling Chat GPT API"]'/>
+		<http:request method="POST" doc:name="chat_gpt_api_call" doc:id="a030a6b1-ec77-4214-974c-9e1d3f636780" config-ref="HTTP_Request_configuration" path="${gpt.https.path}" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" responseTimeout='#["${response_timeout}"]'>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer " ++ "${secure::gpt.https.api_key}",
+	"Content-Type" : "application/json"
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="71a7bc02-62cf-4936-835a-0e2796c9db7c" message='#["Chat GPT API call successful"]'/>
+	
+</sub-flow>
+	<sub-flow name="call-whatsapp-api" doc:id="e972a3b6-132d-40f2-8b7f-175bdf971af2" >
+		<logger level="INFO" doc:name="Logger" doc:id="6062130f-8916-47fc-ae32-c1bb1d5ed6a5" message='#["Calling WhatsApp API"]'/>
+		<http:request method="POST" doc:name="whatsapp_api_call" doc:id="e4fd6af0-973f-422e-922d-f9518f52b3b9" config-ref="HTTP_Request_configuration_whatsapp" path="${whatsapp.https.path}" responseTimeout='#["${response_timeout}"]'>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer " ++ "${secure::whatsapp.https.token}",
+	"Content-Type" : "application/json"
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="0259fda8-eaec-4bf4-9be1-6b08f1c0b4ad" message='#["WhatsApp API Call Successful"]'/>
+	
+</sub-flow>
+</mule>

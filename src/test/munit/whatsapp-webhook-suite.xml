@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="whatsapp-webhook-suite.xml" />
+	<munit:test name="whatsapp-webhook-get-flow-test-success" doc:id="1cc526e2-76a5-4b80-a1eb-60da11a8b75a" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="6829b1dd-56e7-419f-9b19-ae087ab6326c" >
+				<munit:payload value="#[readUrl('classpath://whatsappwebhookgetflowtestsuccess\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://whatsappwebhookgetflowtestsuccess\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to whatsapp-webhook-get-flow" doc:id="4c0f3d0a-71e3-44ab-b12f-9aa7aa993871" name="whatsapp-webhook-get-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="ef01cf90-9c41-4076-9473-d2a26dd12395" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import whatsappwebhookgetflowtestsuccess::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="whatsapp-webhook-post-flow-test-Hi" doc:id="f2c2f6c7-2b5f-441e-9cad-345591a58a88" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock call-whatsapp-api" doc:id="a0fa78a2-3193-4c30-be48-889cc956d031" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="801d3c12-2f52-4d25-82c4-e815ae4f4736" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://whatsappwebhookpostflowtestHi\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://whatsappwebhookpostflowtestHi\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://whatsappwebhookpostflowtestHi\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="930a9c6a-0cdf-41ce-a01a-6e42621d6851" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://whatsappwebhookpostflowtestHi\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://whatsappwebhookpostflowtestHi\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to whatsapp-webhook-post-flow" doc:id="3a6eefc2-5b8e-4ef5-80ca-18fe7904449a" name="whatsapp-webhook-post-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="a199e65b-569a-45b9-be97-2cadcc11cd64" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import whatsappwebhookpostflowtestHi::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="whatsapp-webhook-post-flow-test-not-correct-message" doc:id="6516a3f1-2f2d-4f19-909f-db26a96aae52" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="f3dfd4a3-3ae3-4f2b-9125-55f2086d6cfd" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://whatsappwebhookpostflowtestnotcorrectmessage\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://whatsappwebhookpostflowtestnotcorrectmessage\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to whatsapp-webhook-post-flow" doc:id="b7f6609b-3718-4a7f-ab75-f85822c18b85" name="whatsapp-webhook-post-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="a8d21ca6-9529-4fd7-8f80-45ab611e338f" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import whatsappwebhookpostflowtestnotcorrectmessage::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="whatsapp-webhook-post-flow-test-not-heathcare-query" doc:id="226f236f-fd98-4746-a126-04358d48d13f" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock get-gpt-data-subFlow" doc:id="8ee3d1ec-eec6-4aff-b712-9660a3872a29" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b8fee8aa-2013-4e92-8512-028a001dea66" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://whatsappwebhookpostflowtestnotheathcarequery\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://whatsappwebhookpostflowtestnotheathcarequery\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://whatsappwebhookpostflowtestnotheathcarequery\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="be1ebc85-3a69-4d24-801a-0ad6f1e0c65c" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://whatsappwebhookpostflowtestnotheathcarequery\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://whatsappwebhookpostflowtestnotheathcarequery\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to whatsapp-webhook-post-flow" doc:id="b77ec478-390e-4780-ad8f-2dd6a9b53bb1" name="whatsapp-webhook-post-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="d4334b67-1d0d-4961-b2d7-53d92177ae24" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import whatsappwebhookpostflowtestnotheathcarequery::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="whatsapp-webhook-post-flow-test-healthcare-message" doc:id="d5200f53-9035-4082-8003-59f799e6c665" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock get-gpt-data-subFlow" doc:id="f4041e47-ac7d-411e-ba1f-b1c5a5cae604" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b8fee8aa-2013-4e92-8512-028a001dea66" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://whatsappwebhookpostflowtesthealthcaremessage\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://whatsappwebhookpostflowtesthealthcaremessage\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="input_var" value="#[output application/java --- readUrl('classpath://whatsappwebhookpostflowtesthealthcaremessage\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="7f553c1c-a1f5-447e-9717-de974171cadc" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://whatsappwebhookpostflowtesthealthcaremessage\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://whatsappwebhookpostflowtesthealthcaremessage\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to whatsapp-webhook-post-flow" doc:id="1af8504f-66e4-4215-be1d-103c8520ed12" name="whatsapp-webhook-post-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="7f1c0e99-4040-4ab2-9c5b-b8a8204f42cc" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import whatsappwebhookpostflowtesthealthcaremessage::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

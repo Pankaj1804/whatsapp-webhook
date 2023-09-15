@@ -1,0 +1,23 @@
+gpt:
+  https:
+    host: "api.openai.com"
+    path: "/v1/chat/completions"
+    api_key: "![0mrQ51K9/yn/xJ4CpED0mMnKhGN8PR1IOdzLSrJHvrPdzQEVs5ybk0Rnp16jwPsYhK33Hk8yG4I=]"
+    
+  request:
+    model: "gpt-3.5-turbo"
+    role: "user"
+   
+           
+whatsapp:
+  https:
+    host: "graph.facebook.com"
+    path: "/v17.0/118156384720335/messages"
+    token: "![ZdGxb9p3ULzrJuxbbKG0JJ0Hc39SFl4EiD3hWHTuol6JwtlPhaKv6redSkI6kWA00o4W0AC3iBifyhnOwTosNbHIVJk8/YPsYP+hc+MwTkpT6a0ktc+Ygec6QkDfLuWENvYeecfQzAcG+4IzUWYFV985CYcfYPSW53VBndqorIw5iV8KpInB509ndkDc0Coc4FHI9Cj3GH307zRYEx4NnI1EaKhw0MgSGcueavjgXH+VGmLS/Vuoh0pzIujojVHbFS9XkhTykANSrKLkVZzQOQsKYUJKVOgqF77TCFpI8RI=]"
+  
+  template:
+    initial: "arogya_sarathi"
+    no_health: "arogya_sarathi_wrong_q"
+    error_template: "arogya_sarathi_error"
+    
+response_timeout: "300000"

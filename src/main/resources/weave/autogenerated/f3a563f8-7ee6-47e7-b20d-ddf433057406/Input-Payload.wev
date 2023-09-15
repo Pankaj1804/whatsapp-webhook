@@ -1,0 +1,7 @@
+%dw 2.0
+
+type auto_f3a563f8_7ee6_47e7_b20d_ddf433057406_Input_Payload = {|
+  model: String, 
+  messages: Array<{|    role: String,     content: Any  |}>
+|}
+
